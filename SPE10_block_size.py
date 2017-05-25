@@ -26,19 +26,20 @@ def get_block_by_ijk(i, j, k, n_i, n_j, n_k):
 
     """
     block = np.arange(k-1,n_k)*n_i*n_j+((i-1)+(j-1)*n_i)
+
     return block
 # Parâmetros
 #outfile_h5m = "multiscale.h5m"
-outfile_vtk = "multiscale_CR_3_x_11_17.vtk"
+outfile_vtk = "multiscale.vtk"
 
 #Get multiscale parameters
-coarse_ratio_x = 3
-coarse_ratio_y = 22
-coarse_ratio_z = 17
+coarse_ratio_x = 4
+coarse_ratio_y = 6
+coarse_ratio_z = 7
 
-mesh_size_x = 60
-mesh_size_y = 220
-mesh_size_z = 85
+mesh_size_x = 18
+mesh_size_y = 22
+mesh_size_z = 15
 
 mesh_size_x_coarse = mesh_size_x/coarse_ratio_x
 mesh_size_y_coarse = mesh_size_y/coarse_ratio_y
@@ -50,6 +51,30 @@ volume_dims = (block_size_x, block_size_y ,block_size_z)
 coarse_ids_x = [i // (coarse_ratio_x) for i in xrange(mesh_size_x)]
 coarse_ids_y = [i // (coarse_ratio_y) for i in xrange(mesh_size_y)]
 coarse_ids_z = [i // (coarse_ratio_z) for i in xrange(mesh_size_z)]
+print coarse_ids_x, coarse_ids_y, coarse_ids_z
+
+new_coarse_x = coarse_ids_x[mesh_size_x//coarse_ratio_x*coarse_ratio_x:]
+if len(new_coarse_x) < mesh_size_x//coarse_ratio_x:
+    new_coarse_x = np.repeat(max(coarse_ids_x)-1,len(new_coarse_x)).tolist()
+    coarse_ids_x = coarse_ids_x[:mesh_size_x//coarse_ratio_x*coarse_ratio_x]+new_coarse_x
+else:
+    coarse_ids_x = coarse_ids_x
+
+new_coarse_y = coarse_ids_y[mesh_size_y//coarse_ratio_y*coarse_ratio_y:]
+if len(new_coarse_y) < mesh_size_y//coarse_ratio_y:
+    new_coarse_y = np.repeat(max(coarse_ids_y)-1,len(new_coarse_y)).tolist()
+    coarse_ids_y = coarse_ids_y[:mesh_size_y//coarse_ratio_y*coarse_ratio_y]+new_coarse_y
+else:
+    coarse_ids_y = coarse_ids_y
+
+new_coarse_z = coarse_ids_z[mesh_size_z//coarse_ratio_z*coarse_ratio_z:]
+if len(new_coarse_z) < mesh_size_z//coarse_ratio_y:
+    new_coarse_z = np.repeat(max(coarse_ids_z)-1,len(new_coarse_z)).tolist()
+    coarse_ids_z = coarse_ids_z[:mesh_size_z//coarse_ratio_z*coarse_ratio_z]+new_coarse_z
+else:
+    coarse_ids_y = coarse_ids_y
+
+print coarse_ids_x, coarse_ids_y, coarse_ids_z
 
 n_fine = mesh_size_x*mesh_size_y*mesh_size_z
 n_coarse = (max(coarse_ids_x)+1)*(max(coarse_ids_y)+1)*(max(coarse_ids_z)+1)
